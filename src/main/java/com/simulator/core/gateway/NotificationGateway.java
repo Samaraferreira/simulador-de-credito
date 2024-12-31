@@ -1,8 +1,8 @@
 package com.simulator.core.gateway;
 
-import com.simulator.core.domain.Simulation;
+import com.simulator.core.domain.SimulationDomain;
 
 public interface NotificationGateway {
 
-    void notify(Simulation simulation);
+    void notify(SimulationDomain simulationDomain);
 }

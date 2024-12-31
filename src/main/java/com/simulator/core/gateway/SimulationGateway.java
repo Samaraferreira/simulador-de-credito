@@ -1,8 +1,8 @@
 package com.simulator.core.gateway;
 
-import com.simulator.core.domain.Simulation;
+import com.simulator.core.domain.SimulationDomain;
 
 public interface SimulationGateway {
 
-    Simulation create(Simulation simulation);
+    SimulationDomain create(SimulationDomain simulationDomain);
 }

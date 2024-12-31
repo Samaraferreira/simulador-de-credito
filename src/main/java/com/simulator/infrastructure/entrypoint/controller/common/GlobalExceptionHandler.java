@@ -1,4 +1,4 @@
-package com.simulator.adapters.common;
+package com.simulator.infrastructure.entrypoint.controller.common;
 
 import com.simulator.core.exception.BusinessException;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.simulator.adapters.configuration;
+package com.simulator.infrastructure.configuration;
 
 import com.simulator.core.gateway.InterestRateGateway;
 import com.simulator.core.gateway.NotificationGateway;

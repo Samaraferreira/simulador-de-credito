@@ -1,5 +1,7 @@
-package com.simulator.adapters.entrypoint.dto;
+package com.simulator.infrastructure.entrypoint.controller.dto;
 
+import com.simulator.core.domain.SimulationRequestDomain;
+import com.simulator.core.domain.builder.SimulationRequestBuilder;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
@@ -20,4 +22,12 @@ public record SimulationRequest(
         @NotEmpty @Email String email
 ) {
 
+        public SimulationRequestDomain toDomain() {
+                return new SimulationRequestBuilder()
+                        .amount(amount)
+                        .birthDate(birthDate)
+                        .paymentTerm(paymentTerm)
+                        .email(email)
+                        .build();
+        }
 }

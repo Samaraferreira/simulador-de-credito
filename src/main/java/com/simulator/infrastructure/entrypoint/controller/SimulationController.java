@@ -1,8 +1,8 @@
-package com.simulator.adapters.entrypoint;
+package com.simulator.infrastructure.entrypoint.controller;
 
-import com.simulator.adapters.entrypoint.dto.SimulationRequest;
-import com.simulator.adapters.entrypoint.dto.SimulationResponse;
-import com.simulator.core.domain.Simulation;
+import com.simulator.core.domain.SimulationRequestDomain;
+import com.simulator.infrastructure.entrypoint.controller.dto.SimulationRequest;
+import com.simulator.infrastructure.entrypoint.controller.dto.SimulationResponse;
 import com.simulator.core.usecase.SimulationUseCase;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +24,7 @@ public class SimulationController {
 
     @PostMapping
     public SimulationResponse simulate(@RequestBody @Valid SimulationRequest simulationRequest) {
-        var proposal = new Simulation(simulationRequest.amount(),
-                simulationRequest.birthDate(),
-                simulationRequest.paymentTerm(), simulationRequest.email());
-        Simulation simulation = simulationUseCase.create(proposal);
-        return SimulationResponse.fromSimulation(simulation);
+        SimulationRequestDomain simulationDomain = simulationRequest.toDomain();
+        return SimulationResponse.fromDomain(simulationUseCase.create(simulationDomain));
     }
 }

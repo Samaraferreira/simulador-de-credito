@@ -1,7 +1,9 @@
 package com.simulator.core.usecase.impl;
 
 
-import com.simulator.core.domain.Simulation;
+import com.simulator.core.domain.SimulationDomain;
+import com.simulator.core.domain.SimulationRequestDomain;
+import com.simulator.core.domain.builder.SimulationBuilder;
 import com.simulator.core.gateway.InterestRateGateway;
 import com.simulator.core.gateway.NotificationGateway;
 import com.simulator.core.gateway.SimulationGateway;
@@ -30,26 +32,27 @@ public class SimulationUseCaseImpl implements SimulationUseCase {
     }
 
     @Override
-    public Simulation create(Simulation simulation) {
+    public SimulationDomain create(SimulationRequestDomain simulationRequestDomain) {
 
-        double annualRate = interestRateGateway.getAnnualInterestRate(simulation.getAge());
+        double annualRate = interestRateGateway.getAnnualInterestRate(simulationRequestDomain.getAge());
 
         double monthlyRate = annualRate / MONTHS_IN_YEAR;
 
-        BigDecimal monthlyPayment = calculateMonthlyPayment(simulation.getAmount(), monthlyRate, simulation.getPaymentTerm());
+        BigDecimal monthlyPayment = calculateMonthlyPayment(simulationRequestDomain.getAmount(), monthlyRate,
+                simulationRequestDomain.getPaymentTerm());
 
-        BigDecimal totalAmount = calculateTotalAmount(simulation, monthlyPayment);
+        BigDecimal totalAmount = calculateTotalAmount(BigDecimal.valueOf(simulationRequestDomain.getPaymentTerm()),
+                monthlyPayment);
 
-        BigDecimal totalInterestAmount = calculateTotalInterestAmount(simulation, totalAmount);
+        BigDecimal totalInterestAmount = calculateTotalInterestAmount(simulationRequestDomain.getAmount(), totalAmount);
 
-        simulation.setMonthlyPayment(round(monthlyPayment));
-        simulation.setTotalAmount(totalAmount);
-        simulation.setTotalInterestAmount(totalInterestAmount);
+        SimulationDomain simulationDomain = buildSimulationDomain(simulationRequestDomain, monthlyPayment, annualRate,
+                totalAmount, totalInterestAmount);
 
-        Simulation savedSimulation = simulationGateway.create(simulation);
-        notificationGateway.notify(savedSimulation);
+        simulationGateway.create(simulationDomain);
+        notificationGateway.notify(simulationDomain);
 
-        return simulation;
+        return simulationDomain;
     }
 
     private BigDecimal calculateMonthlyPayment(BigDecimal amount, double monthlyRate, int paymentTerm) {
@@ -60,13 +63,28 @@ public class SimulationUseCaseImpl implements SimulationUseCase {
                 .divide(BigDecimal.valueOf(denominator), MathContext.DECIMAL128);
     }
 
-    private BigDecimal calculateTotalAmount(Simulation simulation, BigDecimal monthlyInstallmentAmount) {
-        BigDecimal term = BigDecimal.valueOf(simulation.getPaymentTerm());
-        return round(monthlyInstallmentAmount.multiply(term));
+    private BigDecimal calculateTotalAmount(BigDecimal paymentTerm, BigDecimal monthlyPayment) {
+        return round(monthlyPayment.multiply(paymentTerm));
     }
 
-    private BigDecimal calculateTotalInterestAmount(Simulation simulation, BigDecimal totalAmount) {
-        return round(totalAmount.subtract(simulation.getAmount()));
+    private BigDecimal calculateTotalInterestAmount(BigDecimal amount, BigDecimal totalAmount) {
+        return round(totalAmount.subtract(amount));
+    }
+
+    private SimulationDomain buildSimulationDomain(SimulationRequestDomain simulationRequestDomain,
+                                                   BigDecimal monthlyPayment, double annualRate, BigDecimal totalAmount,
+                                                   BigDecimal totalInterestAmount) {
+        return new SimulationBuilder()
+                .amount(simulationRequestDomain.getAmount())
+                .email(simulationRequestDomain.getEmail())
+                .paymentTerm(simulationRequestDomain.getPaymentTerm())
+                .birthDate(simulationRequestDomain.getBirthDate())
+                .monthlyPayment(monthlyPayment)
+                .annualInterestRate(annualRate)
+                .monthlyPayment(round(monthlyPayment))
+                .totalAmount(totalAmount)
+                .totalInterestAmount(totalInterestAmount)
+                .build();
     }
 
     private BigDecimal round(BigDecimal amount) {

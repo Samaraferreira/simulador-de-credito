@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 public class InterestRateGatewayImpl implements InterestRateGateway {
 
     public double getAnnualInterestRate(int age) {
-        if (age <= 25) return 5.0/100;
-        else if (age <= 40) return 3.0/100;
-        else if (age <= 60) return 2.0/100;
-        else return 4.0/100;
+        if (age <= 25) return 0.05;
+        else if (age <= 40) return 0.03;
+        else if (age <= 60) return 0.02;
+        else return 0.04;
     }
 }

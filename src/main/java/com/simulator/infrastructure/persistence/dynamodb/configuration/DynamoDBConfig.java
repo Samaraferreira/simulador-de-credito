@@ -1,4 +1,4 @@
-package com.simulator.infrastructure.persistence.dynamodb;
+package com.simulator.infrastructure.persistence.dynamodb.configuration;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

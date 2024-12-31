@@ -1,7 +1,8 @@
 package com.simulator.core.usecase;
 
-import com.simulator.core.domain.Simulation;
+import com.simulator.core.domain.SimulationDomain;
+import com.simulator.core.domain.SimulationRequestDomain;
 
 public interface SimulationUseCase {
-    Simulation create(Simulation simulation);
+    SimulationDomain create(SimulationRequestDomain simulationRequestDomain);
 }

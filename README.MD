@@ -26,7 +26,7 @@ docker-compose up -d
 ```
 
 ## Requisições - Envio de simulação
-Endpoint: /simulationDomain
+Endpoint: /simulation
 
 ### Request Body
 
